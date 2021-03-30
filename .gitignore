@@ -1,7 +1,10 @@
 *.swp
 *.pyc
+*.npz
+*.pgn
 .DS_Store
 .mypy_cache
+__pycache__
 env/
 env-chess/
 chess-env/

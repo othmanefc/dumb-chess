@@ -1,4 +1,7 @@
 {
     "python.pythonPath": "/Users/01892167/Documents/dumb-chess/env-chess/bin/python3",
-    "python.formatting.provider": "yapf"
+    "python.formatting.provider": "yapf",
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true
 }

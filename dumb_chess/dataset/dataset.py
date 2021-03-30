@@ -1,12 +1,14 @@
 from typing import List
 
-import numpy as np
-import chess.pgn
-
 import requests
 import os
 import logging
 import zipfile
+from tqdm import tqdm
+
+import numpy as np
+import chess.pgn
+from torch.utils.data import Dataset
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('DATASET')
@@ -19,11 +21,12 @@ class ChessDataset:
     def __init__(self) -> None:
         pass
 
-    def parse_pgn(self):
+    def parse_pgn(self, with_save=False, num_samples=None):
         result_mapping = {'1/2-1/2': 0, '0-1': -1, '1-0': 1}
         logger.info('Parsing games...')
-        listdir = os.litdir(self.games_dir)
-        for i, gamef in listdir:
+        list_dir = os.listdir(self.games_dir)
+        X, y = [], []
+        for i, gamef in enumerate(list_dir):
             logger.info(i + 1, '/', len(list_dir))
             with open(os.path.join(self.games_dir, gamef),
                       'r',
@@ -37,14 +40,36 @@ class ChessDataset:
                         pass
                     else:
                         if game is None:
-                            logger.error('Game is empty')
+                            logger.error('Game is empty...')
+                            break
                         result = game.headers['Result']
                         if result not in result_mapping:
                             logger.error('Game has wrong results...')
                             continue
+                        value = result_mapping[result]
                         board = game.board()
-                        for move in board.first_game.mainline_moves():
+                        for move in tqdm(game.mainline_moves(), desc='moves'):
                             board.push(move)
+                            serialized = State(board).serialize()
+                            X.append(serialized)
+                            y.append(value)
+                        logger.info(f'serialized {len(X)} examples...')
+                        if num_samples and len(X) >= num_samples:
+                            logger.info('Number of samples max reached...')
+                            break
+        self.X, self.y = np.array(X), np.array(y)
+        if with_save:
+            self.save(len(X))
+
+    def save(self, size) -> None:
+        np.savez(
+            os.path.join("./dumb_chess/dataset/serialized",
+                         f"dataset_{str(size)}.npz"), self.X, self.y)
+        logger.info('saved dataset....')
+
+    def load(self, path) -> None:
+        data = np.load(path)
+        self.X, self.y = data['arr_0'], data['arr_1']
 
     def _download_games(self, names: List[str]) -> None:
         '''
@@ -70,7 +95,7 @@ class ChessDataset:
             open(to + '/' + name + '.zip', 'wb').write(response.content)
             logger.info('Games archive downloaded...')
 
-    def _unzip(self, ffile, dir) -> None:
+    def _unzip(self, ffile: str, dir: str) -> None:
         zip_path = dir + '/' + ffile + '.zip'
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(dir)
@@ -94,16 +119,47 @@ class State:
         "k": 14
     }
 
-    def __init__(self, board):
-        self.board = board
+    def __init__(self, board: chess.Board):
+        self.board = board or chess.Board()
 
-    def serialize(self):
+    def serialize(self) -> np.ndarray:
         board_state = np.zeros(64, dtype=np.uint8)
         for i in range(64):
-            board_state[i] = self.piece_values[i]
-            
+            pp = self.board.piece_at(i)
+            if pp:
+                board_state[i] = self.piece_values[pp.symbol()]
+        self._check_castling_rights(board_state)
+        self._check_en_passant(board_state)
+        board_state = board_state.reshape(8, 8)
+
+        binary_state = np.zeros((5, 8, 8), dtype=np.uint8)
+
+        binary_state[0] = (board_state >> 3) & 1
+        binary_state[1] = (board_state >> 2) & 1
+        binary_state[2] = (board_state >> 1) & 1
+        binary_state[3] = (board_state >> 0) & 1
+
+        binary_state[4] = self.board.turn * 1.0
+
+        return binary_state
+
+    def _check_castling_rights(self, board_state: np.ndarray) -> None:
+        if self.board.has_queenside_castling_rights(chess.WHITE):
+            board_state[0] = 7
+        if self.board.has_kingside_castling_rights(chess.WHITE):
+            board_state[7] = 7
+        if self.board.has_queenside_castling_rights(chess.BLACK):
+            board_state[56] = 15
+        if self.board.has_kingside_castling_rights(chess.BLACK):
+            board_state[63] = 15
+
+    def _check_en_passant(self, board_state: np.ndarray) -> None:
+        if self.board.ep_square is not None:
+            board_state[self.board.ep_square] = 8
+
 
 if __name__ == '__main__':
     names = ['Adams', 'Hou', 'Adam']
     chessds = ChessDataset()
     chessds._download_games(names)
+    chessds.parse_pgn(with_save=True)
