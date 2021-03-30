@@ -8,7 +8,6 @@ from tqdm import tqdm
 
 import numpy as np
 import chess.pgn
-from torch.utils.data import Dataset
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('DATASET')

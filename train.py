@@ -7,6 +7,13 @@ import numpy as np
 from dumb_chess.model import Net
 from dumb_chess.dataset import ChessDataset
 
+try:
+    tf_gpus = tf.config.list_physical_devices('GPU')
+    for gpu in tf_gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
+except:
+    pass
+
 PATH = os.path.join('dumb_chess', 'dataset', 'serialized',
                     'dataset_444920.npz')
 parser = argparse.ArgumentParser()
@@ -19,7 +26,7 @@ parser.add_argument(
     'name of dataset which should be located on /dumb_chess/dataset/serialized'
 )
 parser.add_argument("--epochs", type=int, default=10)
-parser.add_arguement("--bs", type=int, default=16)
+parser.add_argument("--bs", type=int, default=16)
 
 args = parser.parse_args()
 
