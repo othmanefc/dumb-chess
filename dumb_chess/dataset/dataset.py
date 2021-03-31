@@ -30,7 +30,6 @@ class ChessDataset:
             with open(os.path.join(self.games_dir, gamef),
                       'r',
                       encoding='utf-8-sig') as game_file:
-                games = []
                 while True:
                     try:
                         logger.info('Reading game...')
@@ -118,8 +117,12 @@ class State:
         "k": 14
     }
 
-    def __init__(self, board: chess.Board):
+    def __init__(self, board: chess.Board = None):
         self.board = board or chess.Board()
+
+    def key(self):
+        return (self.board.board_fen(), self.board.turn,
+                self.board.castling_rights, self.board.ep_square)
 
     def serialize(self) -> np.ndarray:
         board_state = np.zeros(64, dtype=np.uint8)
@@ -131,14 +134,14 @@ class State:
         self._check_en_passant(board_state)
         board_state = board_state.reshape(8, 8)
 
-        binary_state = np.zeros((5, 8, 8), dtype=np.uint8)
+        binary_state = np.zeros((8, 8, 5), dtype=np.uint8)
 
-        binary_state[0] = (board_state >> 3) & 1
-        binary_state[1] = (board_state >> 2) & 1
-        binary_state[2] = (board_state >> 1) & 1
-        binary_state[3] = (board_state >> 0) & 1
+        binary_state[:, :, 0] = (board_state >> 3) & 1
+        binary_state[:, :, 1] = (board_state >> 2) & 1
+        binary_state[:, :, 2] = (board_state >> 1) & 1
+        binary_state[:, :, 3] = (board_state >> 0) & 1
 
-        binary_state[4] = self.board.turn * 1.0
+        binary_state[:, :, 4] = self.board.turn * 1.0
 
         return binary_state
 
@@ -155,6 +158,9 @@ class State:
     def _check_en_passant(self, board_state: np.ndarray) -> None:
         if self.board.ep_square is not None:
             board_state[self.board.ep_square] = 8
+
+    def possible_moves(self):
+        return list(self.board.legal_moves)
 
 
 if __name__ == '__main__':

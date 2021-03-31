@@ -4,7 +4,7 @@
 *.pgn
 .DS_Store
 .mypy_cache
-__pycache__
+__pycache__/
 env/
 env-chess/
 chess-env/

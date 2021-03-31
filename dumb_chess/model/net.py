@@ -61,6 +61,8 @@ class Net(tf.keras.Model):
                                         activation='relu',
                                         data_format='channels_last')
 
+        self.drop = tf.keras.layers.Dropout(0.2)
+
         self.flatten = tf.keras.layers.Flatten()
         self.out = tf.keras.layers.Dense(1, activation='tanh')
 
@@ -78,6 +80,7 @@ class Net(tf.keras.Model):
         x = self.c_out(x)
 
         x = self.d(x)
-        
+
+        x = self.drop(x)
         x = self.flatten(x)
         return self.out(x)

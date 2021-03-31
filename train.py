@@ -45,7 +45,14 @@ def main():
     model.build((None, 8, 8, 5))
     print(model.summary())
     logger.info('Training model...')
-    model.fit(X, y, batch_size=args.bs, epochs=args.epochs, verbose=True)
+    model.fit(X,
+              y,
+              batch_size=args.bs,
+              epochs=args.epochs,
+              validation_split=0.2,
+              verbose=True)
+    model.save('./model/saved_model')
+    logger.info('Model saved...')
 
 
 if __name__ == '__main__':

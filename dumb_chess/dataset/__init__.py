@@ -1,2 +1,2 @@
-from .dataset import ChessDataset
+from .dataset import ChessDataset, State
 
