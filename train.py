@@ -1,5 +1,6 @@
 import os
 import argparse
+import logging
 
 import tensorflow as tf
 import numpy as np
@@ -7,12 +8,8 @@ import numpy as np
 from dumb_chess.model import Net
 from dumb_chess.dataset import ChessDataset
 
-try:
-    tf_gpus = tf.config.list_physical_devices('GPU')
-    for gpu in tf_gpus:
-        tf.config.experimental.set_memory_growth(gpu, True)
-except:
-    pass
+logger = logging.getLogger('TRAINER')
+logging.basicConfig(level=logging.INFO)
 
 PATH = os.path.join('dumb_chess', 'dataset', 'serialized',
                     'dataset_444920.npz')
@@ -40,11 +37,14 @@ print(X.shape, y.shape)
 
 
 def main():
+    logger.info('Building model...')
     model = Net()
+    logger.info('Compiling model...')
     model.compile(loss=tf.keras.losses.MeanSquaredError(),
                   optimizer=tf.keras.optimizers.Adam())
     model.build((None, 8, 8, 5))
     print(model.summary())
+    logger.info('Training model...')
     model.fit(X, y, batch_size=args.bs, epochs=args.epochs, verbose=True)
 
 
