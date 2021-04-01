@@ -25,7 +25,9 @@ Replace the names I've put with the ones you want, you can put as much as you li
 You can then train the model with specifying some paramaters:
 
 `dataset` : name of the *.npz file that should be located on /dumb_ches/dataset/serialized.
+
 `epochs`  : (default to 10) Epochs.
+
 `bs`: (default to 16) Batch size.
 
 ```bash
