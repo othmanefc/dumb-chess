@@ -1,52 +1,83 @@
-from flask import Flask, Response, request
-from termcolor import colored
+import logging
+from flask import Flask, request
+from functools import cache
 
-from colorama import Style, Back, Fore
-import numpy as np
-import pandas as pd
+import chess
 
 from dumb_chess.dataset import State
 from dumb_chess.search_tree import Valuator
 
-# app = Flask(__name__)
+logger = logging.getLogger('game')
+logging.basicConfig(level=logging.INFO)
+app = Flask(__name__)
+
 s = State()
 v = Valuator()
 
 
-def computer_move(s: State, v: Valuator):
-    try:
-        moves = sorted(v.explore_leaves(s),
-                       key=lambda x: x[0],
-                       reverse=s.board.turn)
-    except Exception:
-        moves = []
-
-    if len(moves) == 0:
-        m1 = "game over"
-        return m1
-    print(colored(Style.BRIGHT + "top 3:", 'green'))
-
-    for i, m in enumerate(moves[:3]):
-        mi = str(m)
-        m1 = mi.split('(', )[1]
-        m2 = m1.split(",", )[0]
-        m = mi.split("'", )[1]
-        print("  ", colored(Style.DIM + "Value increase: ", 'green'),
-              colored(Style.BRIGHT + m2, 'cyan'),
-              colored(Style.DIM + " for move ", 'green'),
-              colored(Style.BRIGHT + m, 'cyan'))
-        if not s.board.turn:
-            comp = colored(Back.WHITE + Fore.BLACK + Style.DIM + "Agent-K")
-        else:
-            comp = colored(Back.MAGENTA + Fore.CYAN + Style.BRIGHT + "Agent-J")
-    print(comp, colored(Style.BRIGHT + "moving", 'magenta'),
-          colored(Style.BRIGHT + str(moves[0][1]), 'yellow'))
+def computer_move(s: State, v: Valuator) -> None:
+    move = sorted(v.explore_leaves(s),
+                  key=lambda x: x[0],
+                  reverse=s.board.turn)
+    if not move:
+        return
+    for i, m in enumerate(move[:3]):
+        logger.info(f'top {i +1} move: {m}')
+    color = 'white' if s.board.turn else 'black'
+    logger.info(f'{color} moving {move[0][1]}')
+    s.board.push(move[0][1])
 
 
-# @app.route('/')
-# def hello_world():
-#     page = open("index.html").read()
-#     return page.replace('start', s.board_fen())
+@app.route('/')
+def hello_world():
+    page = open("index.html").read()
+    return page.replace('start', s.board.fen())
+
+
+@app.route('/move')
+def move():
+    if not s.board.is_game_over():
+        source = int(request.args.get('from', default=''))
+        target = int(request.args.get('to', default=''))
+        promotion = True if request.args.get('promotion',
+                                             default='') == 'true' else False
+        move = s.board.san(
+            chess.Move(source,
+                       target,
+                       promotion=chess.QUEEN if promotion else None))
+        if move:
+            logger.info(f'Human moves {move}')
+            try:
+                s.board.push_san(move)
+            except Exception:
+                response = app.response_class(response='illegal move',
+                                              status=200)
+                return response
+            logger.info('Waiting for computer moves...')
+            computer_move(s, v)
+            response = app.response_class(response=s.board.fen(), status=200)
+            return response
+    else:
+        results = {'1-2/1-2': 'Draw', '1': 'White wins', '-1': 'Black wins'}
+        response = app.response_class(response=results[s.board.result()],
+                                      status=200)
+        return response
+
+
+@app.route('/newgame')
+def newgame():
+    s.board.reset()
+    logger.info('Board reset...')
+    response = app.response_class(response=s.board.fen(), status=200)
+    return response
+
+
+@app.route("/undo")
+def undo():
+    # s.board.pop()
+    response = app.response_class(response=s.board.fen(), status=200)
+    return response
+
 
 if __name__ == '__main__':
-    computer_move(s, v)
+    app.run(debug=True)
