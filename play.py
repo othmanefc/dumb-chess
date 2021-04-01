@@ -1,6 +1,5 @@
 import logging
 from flask import Flask, request
-from functools import cache
 
 import chess
 
