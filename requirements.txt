@@ -1,0 +1,5 @@
+chess==1.4.0
+flask==1.1.2
+numpy==1.19.5
+tensorflow==2.4.0
+tqdm==4.59.0
