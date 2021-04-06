@@ -64,7 +64,8 @@ object ChessMiner {
       ) => Boolean
     )
 
-    saveToFile(analyzedOpenings, "openingsFile")
+    saveToFile(analyzedOpenings, "openingsFile.txt")
+    println("Saved!!!!")
 
   }
 
