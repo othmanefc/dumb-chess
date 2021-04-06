@@ -1,0 +1,4 @@
+[0m[[0m[31merror[0m] [0m[0m/Users/01892167/Documents/dumb-chess/analysis/analysis-chess/src/main/scala/Main.scala:181:32: value productElementNames is not a member of ScoreCount[0m
+[0m[[0m[31merror[0m] [0m[0m      ) + "|" + openings(0)._2.productElementNames.toList.mkString("|" + "\n")[0m
+[0m[[0m[31merror[0m] [0m[0m                               ^[0m
+[0m[[0m[31merror[0m] [0m[0mone error found[0m

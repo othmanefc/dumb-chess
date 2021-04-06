@@ -1,0 +1,15 @@
+[0m[[0m[0mdebug[0m] [0m[0mPackaging /Users/01892167/Documents/dumb-chess/analysis/analysis-chess/target/scala-2.12/chess-analysis_2.12-1.0.jar ...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInput file mappings:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	GameKey.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/01892167/Documents/dumb-chess/analysis/analysis-chess/target/scala-2.12/classes/GameKey.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ChessMiner.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/01892167/Documents/dumb-chess/analysis/analysis-chess/target/scala-2.12/classes/ChessMiner.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ScoreCount$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/01892167/Documents/dumb-chess/analysis/analysis-chess/target/scala-2.12/classes/ScoreCount$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ScoreCount.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/01892167/Documents/dumb-chess/analysis/analysis-chess/target/scala-2.12/classes/ScoreCount.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ChessMiner$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/01892167/Documents/dumb-chess/analysis/analysis-chess/target/scala-2.12/classes/ChessMiner$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	GameKey$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/01892167/Documents/dumb-chess/analysis/analysis-chess/target/scala-2.12/classes/GameKey$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0mDone packaging.[0m
