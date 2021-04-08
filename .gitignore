@@ -2,6 +2,7 @@
 *.pyc
 *.npz
 *.pgn
+openingsFile.txt
 !analysis/analysis-chess/games/Kasparov.pgn
 .DS_Store
 .mypy_cache
