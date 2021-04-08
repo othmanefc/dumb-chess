@@ -25,7 +25,9 @@ def main():
     try:
         data._download_games(args.players)
     except Exception:
-        logger.error('could not download the games, will try to parse what is in memory')
+        logger.error(
+            'could not download the games, will try to parse what is in memory'
+        )
     logger.info('Started parsing the games...')
     data.parse_pgn(with_save=True)
     logger.info('Ended parsing')

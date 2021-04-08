@@ -8,5 +8,7 @@
 __pycache__/
 env/
 env-chess/
+env_dumb/
+dumb_env/
 chess-env/
 data
