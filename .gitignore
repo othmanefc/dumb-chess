@@ -2,6 +2,8 @@
 *.pyc
 *.npz
 *.pgn
+.ipynb_checkpoints
+.metals/
 openingsFile.txt
 !analysis/analysis-chess/games/Kasparov.pgn
 .DS_Store
