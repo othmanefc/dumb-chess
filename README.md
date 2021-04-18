@@ -17,6 +17,8 @@ After that, we return either the smallest or the largest value of the child to t
 ### How to use it 
 The repositories already comes with a trained model, that you can directly use with the GUI. However, if you want to train, your own model, you need first to download game files. You can do that with `download.py`, it will also serialize the dataset for training and store it:
 
+There is also a notebook inside of `analysis/analysis-chess/`for all the data visualisation with pretty plots
+
 ``` bash
 python3 download.py --names Kasparov Adams Capablanca
 ```
