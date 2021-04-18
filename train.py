@@ -32,7 +32,7 @@ data.load(PATH)
 
 X, y = data.X, data.y
 X = X.astype(np.float32)
-X = np.moveaxis(X, 1, -1)  # Channels last
+#X = np.moveaxis(X, 1, -1)  # Channels last
 print(X.shape, y.shape)
 
 

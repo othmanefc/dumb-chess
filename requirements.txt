@@ -1,5 +1,5 @@
 chess==1.4.0
 flask==1.1.2
 numpy==1.19.5
-tensorflow==2.4.0
+tf-nightly-gpu==2.6.0.dev20210408
 tqdm==4.59.0

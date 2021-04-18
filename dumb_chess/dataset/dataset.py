@@ -26,7 +26,7 @@ class ChessDataset:
         list_dir = os.listdir(self.games_dir)
         X, y = [], []
         for i, gamef in enumerate(list_dir):
-            logger.info(i + 1, '/', len(list_dir))
+            logger.info(f"{i + 1},/{len(list_dir)}")
             with open(os.path.join(self.games_dir, gamef),
                       'r',
                       encoding='utf-8-sig') as game_file:
