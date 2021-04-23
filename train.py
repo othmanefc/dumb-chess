@@ -11,8 +11,11 @@ from dumb_chess.dataset import ChessDataset
 logger = logging.getLogger('TRAINER')
 logging.basicConfig(level=logging.INFO)
 
-PATH = os.path.join('dumb_chess', 'dataset', 'serialized',
-                    'dataset_444920.npz')
+PATH = os.path.join(
+    'dumb_chess',
+    'dataset',
+    'serialized',
+)
 parser = argparse.ArgumentParser()
 
 parser.add_argument(
@@ -28,7 +31,7 @@ parser.add_argument("--bs", type=int, default=16)
 args = parser.parse_args()
 
 data = ChessDataset()
-data.load(PATH)
+data.load(os.path.join(PATH, args.dataset))
 
 X, y = data.X, data.y
 X = X.astype(np.float32)
